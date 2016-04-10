@@ -5,6 +5,5 @@ export function initialize(application) {
 
 export default {
   name: 'trello-auth',
-  before: 'store',
-  initialize
+  initialize: initialize
 };
