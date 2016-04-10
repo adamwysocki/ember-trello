@@ -7,9 +7,8 @@ module.exports = {
   contentFor: function(type, config){
     var emberTrelloConfig = config.emberTrello || {};
 
-    if (type === 'head' && emberTrelloConfig.key != null){
+    if (type === 'body-footer' && emberTrelloConfig.key != null){
       return `<script src="https://api.trello.com/1/client.js?key=${emberTrelloConfig.key}"></script>\n`;
     }
   }
-
 };
