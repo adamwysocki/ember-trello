@@ -1,1 +1,3 @@
-export { default } from 'ember-trello/models/board';
+import Board from 'ember-trello/models/board';
+
+export default Board;
