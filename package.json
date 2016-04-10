@@ -1,5 +1,5 @@
 {
-  "name": "Ember Trello",
+  "name": "ember-trello",
   "version": "0.1.0",
   "description": "Ember Data wrapper for the Trello API.",
   "directories": {
