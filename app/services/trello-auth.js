@@ -1,1 +1,3 @@
-export { default } from 'ember-trello/services/trello-auth';
+import TrelloAuth from 'ember-trello/services/trello-auth';
+
+export default TrelloAuth;
