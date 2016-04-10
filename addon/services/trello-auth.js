@@ -12,6 +12,9 @@ export default Service.extend({
   key: computed('_key', function() {
     return this.get('_key');
   }),
+  hasValidToken() {
+    return this.get('_token');
+  },
   authorize(successCallback, failureCallback) {
     let authenticationSuccess = () => {
       this.set('_token', Trello.token());
