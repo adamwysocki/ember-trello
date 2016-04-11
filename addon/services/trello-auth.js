@@ -19,7 +19,7 @@ export default Service.extend({
     let authenticationSuccess = () => {
       this.set('_token', Trello.token());
       this.set('_key', Trello.key());
-      console.log("Successful authentication");
+      console.log("[Ember Trello] Successful authentication");
     };
 
     let authenticationFailure = function() {
