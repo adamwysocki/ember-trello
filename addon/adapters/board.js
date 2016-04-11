@@ -1,13 +1,8 @@
-import DS from 'ember-data';
 import Ember from 'ember';
+import { default as TrelloBaseAdapter } from './base';
+import { default as TrelloAdapterError } from './errors';
 
-const { RESTAdapter } = DS;
-const { inject } = Ember;
-
-const NOT_AUTHORIZED_ERROR =
-    "[Ember Trello] Not authorized. Invalid Trello token and/or key.";
-
-/**
+/******************************************************************************
  * The Trello REST Framework adapter allows your store to communicate
  * with Trello APIs by adjusting the JSON and URL structure implemented
  * by Ember Data to match that of the Trello API.
@@ -15,15 +10,10 @@ const NOT_AUTHORIZED_ERROR =
  *
  * @class TrelloBoardAdapter
  * @constructor
- * @extends DS.RESTAdapter
+ * @extends TrelloBaseAdapter
  */
-export default RESTAdapter.extend({
-  trelloAuth: inject.service('TrelloAuth'),
-  host: 'https://api.trello.com',
+export default TrelloBaseAdapter.extend({
   namespace: '1/boards',
-  headers: {
-    'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
-  },
   /****************************************************************************
    * Override buildURL.
    *
@@ -42,8 +32,8 @@ export default RESTAdapter.extend({
     let url           = null;
 
     if(!token || !key) {
-      console.error(NOT_AUTHORIZED_ERROR);
-      throw new Error(NOT_AUTHORIZED_ERROR);
+      Ember.logger.error(TrelloAdapterError.NOT_AUTHORIZED);
+      throw new Error(TrelloAdapterError.NOT_AUTHORIZED);
     }
 
     switch (requestType) {
@@ -62,8 +52,8 @@ export default RESTAdapter.extend({
         url = `${baseUrl}/${query.id}${authParams}`;
         break;
       default:
-        console.error('[Ember Trello] Unknown request type for board model.');
-        throw new Error('Unknown request type for board model.');
+        Ember.logger.error(TrelloAdapterError.BAD_REQUEST_TYPE);
+        throw new Error(TrelloAdapterError.BAD_REQUEST_TYPE);
     }
 
     return url;
@@ -80,12 +70,14 @@ export default RESTAdapter.extend({
     let id              = Ember.get(record, 'id');
     let data            = null;
     let params          = {};
+    let url             = null;
 
     params.closed       = true;
 
     data                = this._processAttributes(params);
 
-    let url = this.buildURL(type.typeKey, id, record, "deleteRecord", data);
+    url                 = this.buildURL(type.typeKey, id,
+                                        record, "deleteRecord", data);
 
     return this._ajax(url, data, "PUT");
   },
@@ -102,6 +94,7 @@ export default RESTAdapter.extend({
     let attributes      = Ember.get(record, '_attributes');
     let data            = null;
     let params          = {};
+    let url             = null;
 
     params.name         = Ember.get(attributes, 'name');
     params.desc         = Ember.get(attributes, 'desc');
@@ -110,7 +103,8 @@ export default RESTAdapter.extend({
 
     data                = this._processAttributes(params);
 
-    let url = this.buildURL(type.typeKey, id, record, "updateRecord", data);
+    url                 = this.buildURL(type.typeKey, id,
+                                        record, "updateRecord", data);
 
     return this._ajax(url, data, "PUT");
   },
@@ -126,6 +120,7 @@ export default RESTAdapter.extend({
     let attributes      = Ember.get(record, '_attributes');
     let data            = null;
     let params          = {};
+    let url             = null;
 
     params.name         = Ember.get(attributes, 'name');
     params.desc         = Ember.get(attributes, 'desc');
@@ -134,58 +129,9 @@ export default RESTAdapter.extend({
 
     data                = this._processAttributes(params);
 
-    let url = this.buildURL(type.typeKey, null, record, "createRecord", data);
+    url                 = this.buildURL(type.typeKey, null,
+                                        record, "createRecord", data);
 
     return this._ajax(url, data, "POST");
-  },
-  /****************************************************************************
-   * _ajax - wrap ajax call
-   *
-   * @param {String} url
-   * @param {String} data (form encoded)
-   * @param {String} type ("PUT", "POST", "DELETE")
-   * @return {Promise} promise
-   */
-  _ajax: function(url, data, type) {
-    return new Ember.RSVP.Promise(function(resolve, reject) {
-      Ember.$.ajax({
-        type: type,
-        url: url,
-        data: data
-      }).then(function(data) {
-        Ember.run(null, resolve, data);
-      }, function(jqXHR) {
-        jqXHR.then = null; // tame jQuery's ill mannered promises
-        Ember.run(null, reject, jqXHR);
-      });
-    });
-  },
-  /****************************************************************************
-   * _processAttributes - transform attribute object to form encoded string
-   *
-   * @param {Object} params
-   * @param {Object} attributes
-   * @return {String} data
-   */
-  _processAttributes: function(params) {
-    let count = 0;
-    let data  = null;
-
-    for (var key in params) {
-        if (params.hasOwnProperty(key)) {
-          let value     = Ember.get(params, key);
-          let element   = `${key}=${value}`;
-
-          if(count) {
-            data = data + '&' + element;
-          } else {
-            data = element;
-          }
-
-          count++;
-        }
-    }
-
-    return data;
   }
 });
