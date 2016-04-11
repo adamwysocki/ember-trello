@@ -1,8 +1,10 @@
 import DS from 'ember-data';
 import BaseSerializer from './base';
+/*
 import { default as LabelSerializer } from './label';
 import { default as ListSerializer } from './list';
 import { default as MembershipSerializer } from './membership';
+*/
 
 const { JSONAPISerializer } = DS;
 
