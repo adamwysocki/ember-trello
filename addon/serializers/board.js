@@ -1,16 +1,12 @@
-import DS from 'ember-data';
-import BaseSerializer from './base';
+import {default as BaseSerializer} from './base';
 /*
 import { default as LabelSerializer } from './label';
 import { default as ListSerializer } from './list';
 import { default as MembershipSerializer } from './membership';
 */
-
-const { JSONAPISerializer } = DS;
-
 const BOARD_MODEL_NAME = "board";
 
-export default JSONAPISerializer.extend({
+export default BaseSerializer.extend({
   hasRelationships(payload) {
     return false;
     //return (payload.lists || payload.labels || payload.memberships);
@@ -52,15 +48,12 @@ export default JSONAPISerializer.extend({
 
     return attributes;
   },
-  createBaseRecord(payload) {
-    return BaseSerializer.createBaseRecord(this.getType(), payload);
-  },
   normalizeUpdateRecordResponse (/*store, primaryModelClass, payload, id, requestType*/) {
     return { meta: {} };
   },
   normalizeSingleResponse(store, type, payload) {
     let board                 = {};
-    board.data                = this.createBaseRecord(payload);
+    board.data                = this.createBaseRecord(this.getType(), payload);
     board.data.attributes     = this.serializeBaseAttributes(payload);
 
     if(this.hasRelationships(payload)) {
@@ -81,7 +74,7 @@ export default JSONAPISerializer.extend({
 
     for(let index = 0; index < payload.length; index++) {
       let payloadBoard    = payload[index];
-      let board           = this.createBaseRecord(payloadBoard);
+      let board           = this.createBaseRecord(this.getType(), payloadBoard);
       board.attributes    = this.serializeBaseAttributes(payloadBoard);
 
       if(this.hasRelationships(payloadBoard)) {

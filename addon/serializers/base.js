@@ -1,10 +1,9 @@
-//////////////////////////////////////////////////////////////////////
-// BaseSerializer
-//
-// Helper methods for serializing REST data into JSON API format
-//
-export default class BaseSerializer {
-  static createBaseRecord(type, payload) {
+import DS from 'ember-data';
+
+const { JSONAPISerializer } = DS;
+
+export default JSONAPISerializer.extend({
+  createBaseRecord(type, payload) {
     let model = {};
 
     model.id           = payload.id;
@@ -12,18 +11,16 @@ export default class BaseSerializer {
     model.attributes   = {};
 
     return model;
-  }
-
-  static createRelationshipRecord(type, payload) {
+  },
+  createRelationshipRecord(type, payload) {
     let model = {};
 
     model.id           = payload.id;
     model.type         = type;
 
     return model;
-  }
-
-  static createIncludedRecord(type, payload) {
+  },
+  createIncludedRecord(type, payload) {
     let model = {};
 
     model.id           = payload.id;
@@ -31,9 +28,8 @@ export default class BaseSerializer {
     model.attributes   = {};
 
     return model;
-  }
-
-  static extractAttributes(modelClass, payload) {
+  },
+  extractAttributes(modelClass, payload) {
     let attributes = {};
 
     modelClass.eachAttribute((key) => {
@@ -44,5 +40,4 @@ export default class BaseSerializer {
 
     return attributes;
   }
-
-}
+});
