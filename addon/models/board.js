@@ -1,6 +1,6 @@
 import DS from 'ember-data';
 
-const { Model, attr } = DS;
+const { Model, attr, hasMany } = DS;
 
 export default Model.extend({
   closed: attr('boolean'),
@@ -22,4 +22,7 @@ export default Model.extend({
   starred: attr('boolean'),
   subscribed: attr('boolean'),
   url: attr('string'),
+
+  // relationships
+  labels: hasMany('label', {async: false}),
 });
