@@ -1,69 +1,39 @@
 import {default as BaseSerializer} from './base';
-/*
 import { default as LabelSerializer } from './label';
-import { default as ListSerializer } from './list';
-import { default as MembershipSerializer } from './membership';
-*/
+
 const BOARD_MODEL_NAME = "board";
 
 export default BaseSerializer.extend({
   hasRelationships(payload) {
-    return false;
-    //return (payload.lists || payload.labels || payload.memberships);
+    return ( payload.labels );
   },
-  serializeRelationships(board, payload){
-    /*
-    let membershipSerializer  = new MembershipSerializer();
-    let labelSerializer       = new LabelSerializer();
-    let listSerializer        = new ListSerializer();
+  extractRelationships(board, payload){
+    let labelSerializer = new LabelSerializer();
 
-    board = listSerializer.serializeLists(board, payload);
-    board = labelSerializer.serializeLabels(board, payload);
-    board = membershipSerializer.serializeMemberships(board, payload);
-    */
+    board               = labelSerializer.extractLabels(board, payload,
+                                                        this.store.modelFor('label'));
+
     return board;
   },
-  serializeBaseAttributes(payload) {
-    let attributes = {};
-
-    attributes.closed             = payload.closed;
-    attributes.dateLastActivity   = payload.dateLastActivity;
-    attributes.dateLastView       = payload.dateLastView;
-    attributes.desc               = payload.desc;
-    attributes.descData           = payload.descData;
-    attributes.idOrganization     = payload.idOrganization;
-    attributes.idTags             = payload.idTags;
-    attributes.invitations        = payload.invitations;
-    attributes.invited            = payload.invited;
-    attributes.labelNames         = payload.labelNames;
-    attributes.name               = payload.name;
-    attributes.pinned             = payload.pinned;
-    attributes.powerUps           = payload.powerUps;
-    attributes.prefs              = payload.prefs;
-    attributes.shortLink          = payload.shortLink;
-    attributes.shortUrl           = payload.shortUrl;
-    attributes.starred            = payload.starred;
-    attributes.subscribed         = payload.subscribed;
-    attributes.url                = payload.url;
-
-    return attributes;
-  },
-  normalizeUpdateRecordResponse (/*store, primaryModelClass, payload, id, requestType*/) {
+  normalizeUpdateRecordResponse () {
     return { meta: {} };
   },
   normalizeSingleResponse(store, type, payload) {
     let board                 = {};
     board.data                = this.createBaseRecord(this.getType(), payload);
-    board.data.attributes     = this.serializeBaseAttributes(payload);
+    board.data.attributes     = this.extractAttributes(type, payload);
 
     if(this.hasRelationships(payload)) {
       board.data.relationships  = {};
       board.included            = [];
 
-      board = this.serializeRelationships(board, payload);
+      board = this.extractRelationships(board, payload);
     }
 
     return board;
+  },
+  normalizeQueryResponse (store, primaryModelClass, payload) {
+    return this.normalizeFindAllResponse(store, primaryModelClass, payload);
   },
   normalizeFindAllResponse(store, type, payload) {
     let results = [];
@@ -75,13 +45,13 @@ export default BaseSerializer.extend({
     for(let index = 0; index < payload.length; index++) {
       let payloadBoard    = payload[index];
       let board           = this.createBaseRecord(this.getType(), payloadBoard);
-      board.attributes    = this.serializeBaseAttributes(payloadBoard);
+      board.attributes    = this.extractAttributes(type, payloadBoard);
 
       if(this.hasRelationships(payloadBoard)) {
         board.relationships       = {};
         board.included            = [];
 
-        board = this.serializeRelationships(board, payloadBoard);
+        board = this.extractRelationships(board, payloadBoard);
       }
 
       results.push(board);
@@ -92,16 +62,10 @@ export default BaseSerializer.extend({
   getType() {
     return BOARD_MODEL_NAME;
   },
-  createRelationshipRecord(payload) {
-    return BaseSerializer.createRelationshipRecord(this.getType(), payload);
-  },
-  createIncludedRecord(payload) {
-    return BaseSerializer.createIncludedRecord(this.getType(), payload);
-  },
-  serializeBoard(parent, board, single = false) {
-    let relationship          = this.createRelationshipRecord(board);
-    let included              = this.createIncludedRecord(board);
-    included.attributes       = this.serializeBaseAttributes(board);
+  extractBoard(parent, board, type, single = false) {
+    let relationship          = this.createRelationshipRecord(type, board);
+    let included              = this.createIncludedRecord(type, board);
+    included.attributes       = this.extractAttributes(type, board);
 
     if(single) {
       if(parent.hasOwnProperty('data')) {
@@ -122,28 +86,6 @@ export default BaseSerializer.extend({
     }
 
     parent.included.push(included);
-
-    return parent;
-  },
-  serializeBoards(parent, payload) {
-    if(payload.boards || payload.board) {
-      if(parent.hasOwnProperty('data')) {
-        parent.data.relationships.boards      = {};
-        parent.data.relationships.boards.data = [];
-      } else {
-        parent.relationships.boards       = {};
-        parent.relationships.boards.data  = [];
-      }
-
-      if(payload.boards) {
-        for(let index = 0; index < payload.boards.length; index++) {
-          let remote      = payload.boards[index];
-          parent          = this.serializeBoard(parent, remote);
-        }
-      } else {
-        parent           = this.serializeBoard(parent, payload.board);
-      }
-    }
 
     return parent;
   }

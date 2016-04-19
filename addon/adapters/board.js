@@ -1,18 +1,22 @@
 import Ember from 'ember';
-import { default as TrelloBaseAdapter } from './base';
-import { default as TrelloAdapterError } from './errors';
+import { default as TrelloBaseAdapater } from './base';
 
-/******************************************************************************
+const NOT_AUTHORIZED_ERROR =
+    "[Ember Trello] Not authorized. Invalid Trello token and/or key.";
+const UNKNOWN_REQUEST_TYPE =
+    "[Ember Trello] Unknown request type for buildURL.";
+
+/**
  * The Trello REST Framework adapter allows your store to communicate
  * with Trello APIs by adjusting the JSON and URL structure implemented
  * by Ember Data to match that of the Trello API.
  *
  *
- * @class TrelloBoardAdapter
+ * @class BoardAdapter
  * @constructor
  * @extends TrelloBaseAdapter
  */
-export default TrelloBaseAdapter.extend({
+export default TrelloBaseAdapater.extend({
   namespace: '1/boards',
   /****************************************************************************
    * Override buildURL.
@@ -32,8 +36,8 @@ export default TrelloBaseAdapter.extend({
     let url           = null;
 
     if(!token || !key) {
-      Ember.logger.error(TrelloAdapterError.NOT_AUTHORIZED);
-      throw new Error(TrelloAdapterError.NOT_AUTHORIZED);
+      Ember.logger.error(NOT_AUTHORIZED_ERROR);
+      throw new Error(NOT_AUTHORIZED_ERROR);
     }
 
     switch (requestType) {
@@ -51,9 +55,12 @@ export default TrelloBaseAdapter.extend({
       case 'queryRecord':
         url = `${baseUrl}/${query.id}${authParams}`;
         break;
+      case 'query':
+        url = `${this.get('host')}/1/members/me/boards${authParams}`;
+        break;
       default:
-        Ember.logger.error(TrelloAdapterError.BAD_REQUEST_TYPE);
-        throw new Error(TrelloAdapterError.BAD_REQUEST_TYPE);
+        Ember.logger.error(UNKNOWN_REQUEST_TYPE);
+        throw new Error(UNKNOWN_REQUEST_TYPE);
     }
 
     return url;
@@ -68,9 +75,8 @@ export default TrelloBaseAdapter.extend({
    */
   deleteRecord: function(store, type, record) {
     let id              = Ember.get(record, 'id');
-    let data            = null;
+    let data, url       = null;
     let params          = {};
-    let url             = null;
 
     params.closed       = true;
 
@@ -92,9 +98,8 @@ export default TrelloBaseAdapter.extend({
   updateRecord: function(store, type, record) {
     let id              = Ember.get(record, 'id');
     let attributes      = Ember.get(record, '_attributes');
-    let data            = null;
+    let data, url       = null;
     let params          = {};
-    let url             = null;
 
     params.name         = Ember.get(attributes, 'name');
     params.desc         = Ember.get(attributes, 'desc');
@@ -118,9 +123,8 @@ export default TrelloBaseAdapter.extend({
    */
   createRecord: function(store, type, record) {
     let attributes      = Ember.get(record, '_attributes');
-    let data            = null;
+    let data, url       = null;
     let params          = {};
-    let url             = null;
 
     params.name         = Ember.get(attributes, 'name');
     params.desc         = Ember.get(attributes, 'desc');
