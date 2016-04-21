@@ -1,6 +1,7 @@
 # Ember Trello
 
 [ ![Codeship Status for adamwysocki/ember-trello](https://codeship.com/projects/7b8d1db0-e932-0133-4de9-226489e381a7/status?branch=master)](https://codeship.com/projects/147492)
+[![Code Climate](https://codeclimate.com/github/adamwysocki/ember-trello/badges/gpa.svg)](https://codeclimate.com/github/adamwysocki/ember-trello)
 
 This addon allows you to quickly and effortlessly integrate the Trello API into your Ember application.
 
