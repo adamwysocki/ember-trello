@@ -1,7 +1,7 @@
 {
   "name": "ember-trello",
   "version": "0.1.0",
-  "description": "Ember Data wrapper for the Trello API.",
+  "description": "Ember Addon for intergrating the Trello API.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,12 +11,18 @@
     "start": "ember server",
     "test": "ember try:testall"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adamwysocki/ember-trello.git"
+  },
   "engines": {
     "node": ">= 0.10.0"
   },
-  "author": "Adam Wysocki",
+  "author": "Adam Wysocki <adam@adamwysocki.me>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adamwysocki/ember-trello/issues"
+  },
   "devDependencies": {
     "broccoli-asset-rev": "^2.2.0",
     "ember-cli": "1.13.13",
@@ -38,7 +44,10 @@
     "ember-try": "~0.0.8"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "trello",
+    "trello api",
+    "ember data"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.5"

@@ -21,13 +21,7 @@ export default JSONAPISerializer.extend({
     return model;
   },
   createIncludedRecord(type, payload) {
-    let model = {};
-
-    model.id           = payload.id;
-    model.type         = type;
-    model.attributes   = {};
-
-    return model;
+    return this.createBaseRecord(type, payload);
   },
   extractAttributes(modelClass, payload) {
     let attributes = {};

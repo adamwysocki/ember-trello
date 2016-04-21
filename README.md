@@ -1,10 +1,42 @@
-# Ember-trello
+# Ember Trello
 
-This README outlines the details of collaborating on this Ember addon.
+This addon allows you to quickly and effortlessly integrate the Trello API into your Ember application.
+
+Note: This project is still in a pre-stable (1.0.0) release. Not all functionality is supported, but basic board, label, list, and card CRUD API's are stable. Additional features coming ...
+
+## Usage
+
+First, and most importantly, make sure to register for a Trello application key: https://trello.com/app-key
+
+Then, install this addon:
+
+```shell
+ember install ember-trello
+```
+
+In your config/envrironment.js file add your Trello application key:
+
+```javascript
+ENV.emberTrello = {
+  key: '<your-trello-app-key>'
+};
+```
+
+You will also probably want to update your content security policy (CSP):
+
+```javascript
+ENV.contentSecurityPolicy = {
+  'script-src': "'self' 'unsafe-inline' https://*.trello.com http://localhost:4200",
+  'connect-src': "'self' https://*.trello.com",
+  'img-src': "'self' https://*.trello.com"
+};
+```
 
 ## Installation
 
 * `git clone` this repository
+* `cd ember-trello`
+* `npm-intall -g ember-cli`
 * `npm install`
 * `bower install`
 
@@ -15,7 +47,6 @@ This README outlines the details of collaborating on this Ember addon.
 
 ## Running Tests
 
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 

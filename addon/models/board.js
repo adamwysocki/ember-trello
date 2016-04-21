@@ -24,5 +24,5 @@ export default Model.extend({
   url: attr('string'),
 
   // relationships
-  labels: hasMany('label', {async: false}),
+  labels: hasMany('label', {async: false})
 });
