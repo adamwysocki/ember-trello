@@ -2,7 +2,7 @@ import { moduleForModel, test } from 'ember-qunit';
 
 moduleForModel('board', 'Unit | Model | board', {
   // Specify the other units that are required for this test.
-  needs: []
+  needs: [ 'model:label' ]
 });
 
 test('it exists', function(assert) {

@@ -2,7 +2,7 @@ import { moduleForModel, test } from 'ember-qunit';
 
 moduleForModel('board', 'Unit | Serializer | board', {
   // Specify the other units that are required for this test.
-  needs: ['serializer:board']
+  needs: ['serializer:board', 'model:label']
 });
 
 // Replace this with your real tests.
